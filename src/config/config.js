@@ -1,8 +1,8 @@
-export let openWeatherMapURL =
-	'https://api.openweathermap.org/data/2.5/weather?q=Montevideo&units=Metric&lang=sp&APPID=' +
-	process.env.REACT_APP_OPENWEATHERMAP_API_KEY;
-export let iconURL = 'https://openweathermap.org/img/wn/';
-export let Directions = [
+export const openWeatherMapURL = 'https://api.openweathermap.org/data/2.5/weather?';
+export const paramsURL = '&units=metric&appid=' + process.env.REACT_APP_OPENWEATHERMAP_API_KEY;
+export const openStreetMapURL = 'https://nominatim.openstreetmap.org/search.php?format=jsonv2&city=montevideo';
+export const iconURL = 'https://openweathermap.org/img/wn/';
+export const Directions = [
 	'N',
 	'NNE',
 	'NE',
@@ -20,4 +20,4 @@ export let Directions = [
 	'NO',
 	'NNO',
 ];
-export let iconExtension = '@4x.png';
+export const iconExtension = '@4x.png';

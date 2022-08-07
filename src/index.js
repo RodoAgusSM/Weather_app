@@ -1,17 +1,24 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './Weather.css';
-import Weather from './Weather';
+import { createRoot } from 'react-dom/client';
+import './components/Weather/Weather.css';
+import Weather from './components/Weather/Weather';
+import SocialNetwork from './components/SocialNetwork/SocialNetwork';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './translations/i18n';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Weather />
-  </React.StrictMode>,
-  document.getElementById('root')
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
+	<React.StrictMode>
+		<BrowserRouter>
+			<Routes>
+				<Route path='/' element={<Weather />} />
+				<Route index element={<Weather />} />
+				<Route path='social_network' element={<SocialNetwork />} />
+			</Routes>
+		</BrowserRouter>
+	</React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
