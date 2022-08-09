@@ -4,13 +4,13 @@ import { Colors } from './colors';
 let desktopWidth = 500 + 'px';
 let desktopHeight = 577 + 'px';
 let mobileWidth = window.innerWidth * 0.85 + 'px';
-let mobileHeightSmallDisplay = '508px'; //Done
-let mobileHeightBigDisplay = '580px'; //Done
-let mobileHeight12and13ProMax = '580px'; //Done
-let mobileHeight12and13RegularAndPro = '576px'; //No
-let mobileHeight11ProMax = '580px'; //Done
-let mobileHeight11ProAnd13Mini = '520px'; //Done
-let mobileHeight11Regular = '580px'; //Done
+let mobileHeightSmallDisplay = '508px'; //This
+let mobileHeightBigDisplay = '580px'; //This
+let mobileHeight12and13ProMax = '580px'; //This
+let mobileHeight12and13RegularAndPro = '576px'; //Done
+let mobileHeight11ProMax = '580px'; //This
+let mobileHeight11ProAnd13Mini = '520px'; //This
+let mobileHeight11Regular = '580px'; //This
 
 export const GlobalStyle = createGlobalStyle`
   body {
@@ -76,6 +76,7 @@ export const WeatherCard = styled.div`
 	background-color: ${Colors.lightGreen};
 	border-radius: 20px;
 	color: ${Colors.black};
+	word-wrap: break-word;
 	@media only screen and (max-width: 375px) {
 		width: ${mobileWidth};
 		height: ${mobileHeightSmallDisplay};
@@ -140,6 +141,10 @@ export const LocationNotFoundCode = styled.code`
 	display: flex;
 	justify-content: center;
 	text-align: center;
+	overflow-wrap: break-word;
+	-webkit-hyphens: auto;
+	-ms-hyphens: auto;
+	hyphens: auto;
 	@media only screen and (max-width: 375px) {
 		font-size: 11px;
 	}
@@ -187,14 +192,26 @@ export const Subtitle = styled.h2`
 	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 	font-size: 19px;
 	margin-left: 5px;
-	@media (max-width: 768px) {
-		font-size: 16px;
+	@media only screen and (max-width: 375px) {
+		font-size: 14px;
+	}
+	@media only screen and (min-width: 376px) and (max-width: 712px) {
+		font-size: 14px;
+	}
+	@media only screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) {
+		font-size: 14px;
 	}
 	@media only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) {
-		font-size: 15px;
+		font-size: 14px;
+	}
+	@media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) {
+		font-size: 14px;
 	}
 	@media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
-		font-size: 16px;
+		font-size: 14px;
+	}
+	@media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) {
+		font-size: 14px;
 	}
 `;
 
@@ -253,8 +270,8 @@ export const DangerLogo = styled.img.attrs((props) => ({
 `;
 
 export const SearchBarContainer = styled.div`
-	display: flex;
 	height: 40px;
+	display: 'flex';
 `;
 
 export const SearchBar = styled.input`
@@ -290,8 +307,24 @@ export const SearchBar = styled.input`
 
 export const LanguagesContainer = styled.div`
 	display: flex;
-	justify-content: center;
-	margin-top: 18px;
+	left: 32%;
+	bottom: 3.5%;
+	position: absolute;
+	@media only screen and (max-width: 375px) {
+		left: 20%;
+	}
+	@media only screen and (min-width: 376px) and (max-width: 712px) {
+		left: 25%;
+	}
+	@media only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) {
+		left: 22%;
+	}
+	@media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) {
+		left: 25%;
+	}
+	@media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) {
+		left: 25%;
+	}
 `;
 
 export const LanguageButton = styled.span`
@@ -332,7 +365,7 @@ export const SocialNetworkIconContainer = styled.span`
 		left: 86%;
 	}
 	@media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
-		left: 87%;
+		left: 86%;
 	}
 	@media only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) {
 		left: 86%;
