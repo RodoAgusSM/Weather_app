@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import logo from '../../images/sun_half.svg';
 import locationNotFound from '../../images/location_not_found_icon.png';
 import loading from '../../images/loading.gif';
@@ -23,6 +22,7 @@ import {
 	Subtitle,
 	SocialNetworkIconContainer,
 	SocialNetworkIcon,
+	MoreInfoButton,
 } from '../../styles/styles';
 import { openWeatherMapURL, paramsURL, iconURL, Directions, iconExtension } from '../../config/config';
 import CitySearchBar from '../CitySearchBar/CitySearchBar';
@@ -32,6 +32,7 @@ import { useNavigate } from 'react-router-dom';
 import social_network from '../../images/social_network.png';
 import social_network_hover from '../../images/social_network_hover.png';
 import { useTranslation } from 'react-i18next';
+import AirPollution from '../../class/AirPollution';
 
 const Weather = () => {
 	const { t, i18n } = useTranslation();
@@ -57,6 +58,7 @@ const Weather = () => {
 	let [windSpeed, setWindSpeed] = useState([]);
 	let [windDirection, setWindDirection] = useState([]);
 	let [visibility, setVisibility] = useState([]);
+	let [airPollution, setAirPollution] = useState([]);
 	let [sunrise, setSunrise] = useState([]);
 	let [sunset, setSunset] = useState([]);
 	let [isLoading, setIsLoading] = useState(true);
@@ -65,48 +67,59 @@ const Weather = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const fullUrl = openWeatherMapURL + '?lat=' + lat + '&lon=' + lon + '&lang=' + language + paramsURL;
-				const response = await axios.get(fullUrl);
-				setIsSiteWorking(true);
-				setCountryNameShort(response.data.sys.country);
-				setRealFeel(Math.trunc(response.data.main.temp));
-				iconValue.current = response.data.weather[0].icon;
-				setDescription(response.data.weather[0].description);
-				setFeelsLike(Math.trunc(response.data.main.feels_like));
-				setHumidity(response.data.main.humidity);
-				setPressure(response.data.main.pressure);
-				setWindSpeed(parseInt(Math.trunc(response.data.wind.speed) * 3.6));
-				const degrees = parseInt(response.data.wind.deg);
-				const cardinal = parseInt((degrees + 11.25) / 22.5);
-				setWindDirection(Directions[cardinal % 16]);
-				setVisibility(response.data.visibility);
-				const dateNow = new Date();
-				const time = dateNow.getHours() + ':' + dateNow.getMinutes();
-				setTime(time);
-				const date = dateNow.getDate() + '/' + (dateNow.getMonth() + 1) + '/' + dateNow.getFullYear();
-				setDate(date);
-				setSunrise(response.data.sys.sunrise);
-				setSunset(response.data.sys.sunset);
+				const fullUrl = openWeatherMapURL + 'weather' + '?lat=' + lat + '&lon=' + lon + '&lang=' + language + paramsURL;
+				const response = await fetch(fullUrl);
+				if (response.ok) {
+					const data = await response.json();
+					setIsSiteWorking(true);
+					setCountryNameShort(data.sys.country);
+					setRealFeel(Math.trunc(data.main.temp));
+					iconValue.current = data.weather[0].icon;
+					setDescription(data.weather[0].description);
+					setFeelsLike(Math.trunc(data.main.feels_like));
+					setHumidity(data.main.humidity);
+					setPressure(data.main.pressure);
+					setWindSpeed(parseInt(Math.trunc(data.wind.speed) * 3.6));
+					const degrees = parseInt(data.wind.deg);
+					const cardinal = parseInt((degrees + 11.25) / 22.5);
+					setWindDirection(Directions[cardinal % 16]);
+					setVisibility(data.visibility);
+					const dateNow = new Date();
+					const minutesNow = dateNow.getMinutes();
+					const minutes = minutesNow > 10 ? minutesNow : '0' + minutesNow;
+					const time = dateNow.getHours() + ':' + minutes;
+					setTime(time);
+					const date = dateNow.getDate() + '/' + (dateNow.getMonth() + 1) + '/' + dateNow.getFullYear();
+					setDate(date);
+					setSunrise(data.sys.sunrise);
+					setSunset(data.sys.sunset);
+				} else console.log(response.status, response.text);
 			} catch (error) {
 				if (error.response.data.message === 'city not found') setValidCoordinates(false);
 				else setIsSiteWorking(false);
 			}
 			try {
 				setIsIconWorking(true);
-				setTimeout(async () => {
-					const iconUrl = iconURL + iconValue.current + iconExtension;
-					const iconFetched = await axios.get(iconUrl);
-					setIcon(iconFetched?.config?.url);
-					setIsLoading(false);
-				}, 1500);
+				const iconUrl = iconURL + iconValue.current + iconExtension;
+				const response = await fetch(iconUrl);
+				if (response.ok) {
+					setIcon(response?.url);
+				} else console.log(response.status, response.text);
 			} catch (error) {
 				setIsIconWorking(false);
 			}
+			try {
+				const fullUrl =
+					openWeatherMapURL + 'air_pollution' + '?lat=' + lat + '&lon=' + lon + '&lang=' + language + paramsURL;
+				const response = await fetch(fullUrl);
+				if (response.ok) {
+					const data = await response.json();
+					setAirPollution(new AirPollution(data));
+				} else console.log(response.status, response.text);
+				setIsLoading(false);
+			} catch (error) {}
 		};
 		fetchData();
-		setInterval(() => {
-			fetchData();
-		}, 900000);
 	}, [lat, lon, language]);
 
 	const changeCity = (newCity) => {
@@ -165,13 +178,7 @@ const Weather = () => {
 								<BreakLine />
 								<Code>{description}</Code>
 								<BreakLine />
-								<Code>
-									{t('words.updatedAt')} {time}
-								</Code>
-								<BreakLine />
-								<Code>
-									{t('words.date')} {date}
-								</Code>
+								<SunriseSunsetInfo lat={lat} lon={lon} sunrise={sunrise} sunset={sunset} />
 							</WeatherMain>
 							<WeatherData>
 								<Code>
@@ -190,8 +197,25 @@ const Weather = () => {
 									{t('words.visibility')} {visibility} m
 								</Code>
 								<BreakLine />
+								<Code>
+									{t('words.airPollution.aqi')}
+									{Object.values(t('words.airPollution.status', { returnObjects: true }))[airPollution.AQI]}{' '}
+									<MoreInfoButton
+										onClick={() => {
+											navigate(`/air_pollution_info`, { state: { airPollution } });
+										}}>
+										{t('words.airPollution.moreInfo')}
+									</MoreInfoButton>
+								</Code>
 								<BreakLine />
-								<SunriseSunsetInfo lat={lat} lon={lon} sunrise={sunrise} sunset={sunset} />
+								<BreakLine />
+								<Code>
+									{t('words.updatedAt')} {time}
+								</Code>
+								<BreakLine />
+								<Code>
+									{t('words.date')} {date}
+								</Code>
 							</WeatherData>
 						</>
 					) : (

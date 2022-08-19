@@ -17,6 +17,22 @@ export const TranslationPt = {
 		pressure: 'Pressão: ',
 		wind: 'Vento: ',
 		visibility: 'Visibilidade: ',
+		airPollution: {
+			aqi: 'Qualidade do ar: ',
+			status: { 1: 'Bom', 2: 'Aceitável', 3: 'Moderado', 4: 'Pobre', 5: 'Muito pobre' },
+			moreInfo: '+Info',
+			elements: {
+				AQI: 'Qualidade do ar',
+				carbonMonoxide: 'Monóxido de carbono',
+				nitrogenMonoxide: 'Monóxido de nitrogênio',
+				nitrogenDioxide: 'Dióxido de nitrogênio',
+				ozone: 'Ozônio',
+				sulphurDioxide: 'Dióxido de enxofre',
+				fineParticlesMatter: 'Partículas finas de matéria',
+				coarseParticulateMatter: 'Partículas grossas de matéria',
+				ammonia: 'Amônia',
+			},
+		},
 		sunrise: 'Nascer do sol em: ',
 		sunset: 'Pôr do sol em: ',
 		locationNotFound: {
